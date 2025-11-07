@@ -11,24 +11,22 @@ export const useLogin = () => {
   const login = async (username: string, password: string) => {
     setError("");
 
+    if (!username || !password) {
+      setError("لطفا نام کاربری و رمز عبور را وارد کنید.");
+      return;
+    }
+
     try {
-      const response = await createToken(username, password, {
-        username,
-        password,
-      });
+      const response = await createToken(username, password, { username, password });
 
       const { accessToken, refreshToken, role } = response;
 
       authLogin(accessToken, refreshToken, role);
 
-      if (role === "admin") {
-        navigate("/adminTableRoute");
-      } else if (role === "user") {
-        navigate("/userTableRoute");
-      }
+      navigate(role === "admin" ? "/adminTableRoute" : "/userTableRoute");
     } catch (err: any) {
-      setError("نام کاربری یا رمز عبور اشتباه است.");
       console.error("Login error:", err);
+      setError("نام کاربری یا رمز عبور اشتباه است.");
     }
   };
 

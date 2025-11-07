@@ -6,34 +6,52 @@ import { useAuth } from "../stores/AuthContext";
 const AppRoutes = () => {
   const { isLoggedIn, role } = useAuth();
 
-  if (!isLoggedIn) {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
+  return (
+    <Routes>
+      <Route
+        path="/login"
+        element={
+          isLoggedIn ? (
+            <Navigate to={role === "admin" ? "/adminTableRoute" : "/userTableRoute"} replace />
+          ) : (
+            <LoginPage />
+          )
+        }
+      />
+      <Route
+        path="/adminTableRoute"
+        element={
+          isLoggedIn && role === "admin" ? (
+            <ProductPage />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
 
-  if (role === "admin") {
-    return (
-      <Routes>
-        <Route path="/adminTableRoute" element={<ProductPage />} />
-        <Route path="*" element={<Navigate to="/adminTableRoute" replace />} />
-      </Routes>
-    );
-  }
+      <Route
+        path="/userTableRoute"
+        element={
+          isLoggedIn && role === "user" ? (
+            <ProductPage />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
 
-  if (role === "user") {
-    return (
-      <Routes>
-        <Route path="/userTableRoute" element={<ProductPage />} />
-        <Route path="*" element={<Navigate to="/userTableRoute" replace />} />
-      </Routes>
-    );
-  }
-
-  return null;
+      <Route
+        path="*"
+        element={
+          isLoggedIn ? (
+            <Navigate to={role === "admin" ? "/adminTableRoute" : "/userTableRoute"} replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    </Routes>
+  );
 };
 
 export default AppRoutes;

@@ -22,7 +22,11 @@ const fakeUsers = [
     },
 ];
 
-export async function createToken(username: string, password: string, payload: LoginPayload): Promise<TokenResponse> {
+export async function createToken(
+    username: string,
+    password: string,
+    payload: LoginPayload
+): Promise<TokenResponse> {
     const user = fakeUsers.find(
         (u) => u.username === payload.username && u.password === payload.password
     );

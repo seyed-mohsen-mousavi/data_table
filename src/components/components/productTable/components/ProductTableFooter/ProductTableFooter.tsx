@@ -18,7 +18,7 @@ const ProductTableFooter = ({totalCount , page , setPage , setPageSize , pageSiz
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
             <TotalCountDisplay totalCount={totalCount} />
             <PaginationControls page={page} setPage={setPage} totalCount={totalCount} pageSize={pageSize} />
-            <PageSizeSelector setPageSize={setPageSize} pageSize={pageSize} />
+            <PageSizeSelector setPageSize={setPageSize} pageSize={pageSize} setPage={setPage} />
           </div>
         </td>
       </tr>

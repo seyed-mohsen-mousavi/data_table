@@ -19,8 +19,13 @@ const ProductTableControls = ({
     const timeout = setTimeout(() => {
       if (inputText !== search) setSearch(inputText);
     }, 400);
+
     return () => clearTimeout(timeout);
-  }, [inputText]);
+  }, [inputText, search]);
+
+  useEffect(() => {
+    setInputText(search);
+  }, [search]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value);

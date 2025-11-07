@@ -26,11 +26,12 @@ const DeleteProductDialog = ({setShowDeleteConfirm ,showDeleteConfirm, product ,
       setError("")
     }
   };
+  if (!showDeleteConfirm) return null;
 
   return (
     <div
       data-testid="delete-product-dialog"
-      className={`fixed ${showDeleteConfirm ? "opacity-100 visible" : "opacity-0 invisible"} inset-0 bg-black/30 flex items-center justify-center z-50 transition-opacity`}
+      className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 transition-opacity"
     >
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-lg p-6 space-y-4 text-center">
         <p className="text-lg font-medium text-gray-800">

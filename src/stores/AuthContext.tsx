@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { logout as logoutApi } from "../api/logout";
 
 export type AuthContextType = {
@@ -12,11 +6,7 @@ export type AuthContextType = {
   role: "admin" | "user" | null;
   accessToken: string | null;
   refreshToken: string | null;
-  login: (
-    accessToken: string,
-    refreshToken: string,
-    role: "admin" | "user"
-  ) => void;
+  login: (accessToken: string, refreshToken: string, role: "admin" | "user") => void;
   logout: () => Promise<void>;
 };
 
@@ -26,30 +16,17 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
+const storedAccessToken = localStorage.getItem("accessToken");
+const storedRefreshToken = localStorage.getItem("refreshToken");
+const storedRole = localStorage.getItem("role") as "admin" | "user" | null;
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState<"admin" | "user" | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!storedAccessToken && !!storedRefreshToken && !!storedRole);
+  const [role, setRole] = useState<"admin" | "user" | null>(storedRole);
+  const [accessToken, setAccessToken] = useState<string | null>(storedAccessToken);
+  const [refreshToken, setRefreshToken] = useState<string | null>(storedRefreshToken);
 
-  useEffect(() => {
-    const storedAccessToken = localStorage.getItem("accessToken");
-    const storedRefreshToken = localStorage.getItem("refreshToken");
-    const storedRole = localStorage.getItem("role") as "admin" | "user" | null;
-
-    if (storedAccessToken && storedRefreshToken && storedRole) {
-      setIsLoggedIn(true);
-      setAccessToken(storedAccessToken);
-      setRefreshToken(storedRefreshToken);
-      setRole(storedRole);
-    }
-  }, []);
-
-  const login = (
-    accessToken: string,
-    refreshToken: string,
-    role: "admin" | "user"
-  ) => {
+  const login = (accessToken: string, refreshToken: string, role: "admin" | "user") => {
     setIsLoggedIn(true);
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
@@ -78,16 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        isLoggedIn,
-        role,
-        accessToken,
-        refreshToken,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ isLoggedIn, role, accessToken, refreshToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -95,8 +63,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ProductTable from "./components/productTable/ProductTable";
 import ProductPageHeader from "./components/ProductPageHeader";
 import AddProductModal from "./components/AddProductModal";
@@ -9,32 +10,82 @@ import type { Product } from "../api/productApi";
 import { useProducts } from "./components/productTable/hooks/useProducts";
 
 const ProductPage = () => {
-  // استیت‌های مورد نیاز برای کنترل باز و بسته کردم مودال‌ها و دیالوگ تعریف کنید
-  // xseyed : به روی چشم 
   const { logout } = useAuth();
-  const [showAddModal,setShowAddModal] = useState(false)
-  const [showEditModal,setShowEditModal] = useState(false)
-  const [showDeleteConfirm,setShowDeleteConfirm] = useState(false)
+  const navigate = useNavigate();
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const {
+    products,
+    totalCount,
+    page,
+    setPage,
+    pageSize,
+    setPageSize,
+    search,
+    setSearch,
+    sortByPrice,
+    setSortByPrice,
+    loading,
+    refetch,
+  } = useProducts();
+
   const handleLogout = async () => {
     await logout();
+    navigate("/login");
   };
-  const { products , page,pageSize,search , sortByPrice , setPage , setPageSize , setSearch ,setSortByPrice , loading,  refetch , totalCount } = useProducts();
-  const [selectedProduct , setSelectedProduct] = useState<Product | null>(null)
+
   return (
     <div
       data-testid="product-page"
       className="min-h-screen bg-gray-100 p-6 font-sans"
     >
-      <AddProductModal showAddModal={showAddModal} setShowAddModal={setShowAddModal} refetchProducts={refetch} />
-
-      <EditProductModal showEditModal={showEditModal} setShowEditModal={setShowEditModal} product={selectedProduct} refetchProducts={refetch} />
-
-      <DeleteProductDialog showDeleteConfirm={showDeleteConfirm} setShowDeleteConfirm={setShowDeleteConfirm} product={selectedProduct} refetchProducts={refetch} />
+      {showAddModal && (
+        <AddProductModal
+          showAddModal={showAddModal}
+          setShowAddModal={setShowAddModal}
+          refetchProducts={refetch}
+        />
+      )}
+      {showEditModal && (
+        <EditProductModal
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          product={selectedProduct}
+          refetchProducts={refetch}
+        />
+      )}
+      {showDeleteConfirm && (
+        <DeleteProductDialog
+          showDeleteConfirm={showDeleteConfirm}
+          setShowDeleteConfirm={setShowDeleteConfirm}
+          product={selectedProduct}
+          refetchProducts={refetch}
+        />
+      )}
 
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow p-6 space-y-6">
         <ProductPageHeader setShowAddModal={setShowAddModal} />
 
-        <ProductTable loading={loading} totalCount={totalCount} products={products} setPage={setPage} setPageSize={setPageSize} setSearch={setSearch} setSortByPrice={setSortByPrice} search={search} page={page} sortByPrice={sortByPrice} pageSize={pageSize} setSelectedProduct={setSelectedProduct} setShowDeleteConfirm={setShowDeleteConfirm} setShowEditModal={setShowEditModal}  />
+        <ProductTable
+          loading={loading}
+          totalCount={totalCount}
+          products={products}
+          setPage={setPage}
+          setPageSize={setPageSize}
+          setSearch={setSearch}
+          setSortByPrice={setSortByPrice}
+          search={search}
+          page={page}
+          sortByPrice={sortByPrice}
+          pageSize={pageSize}
+          setSelectedProduct={setSelectedProduct}
+          setShowDeleteConfirm={setShowDeleteConfirm}
+          setShowEditModal={setShowEditModal}
+        />
 
         <button
           onClick={handleLogout}
